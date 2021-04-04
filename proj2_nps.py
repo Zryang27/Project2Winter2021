@@ -379,7 +379,7 @@ if __name__ == "__main__":
                     flag = 1
                     break
                 elif ipt_2.isnumeric() is True:
-                    if int(ipt_2) <= len(list_of_site_instances):
+                    if int(ipt_2) <= len(list_of_site_instances) and int(ipt_2) > 0:
                         results = get_nearby_places(list_of_site_instances[int(ipt_2)-1])
                         length_of_line_2 = 12 + len(list_of_site_instances[int(ipt_2)-1].name)
                         print('-' * length_of_line_2)
