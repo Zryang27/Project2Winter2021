@@ -19,7 +19,7 @@ class NationalSite:
     category: string
         the category of a national site (e.g. 'National Park', '')
         some sites have blank category.
-    
+
     name: string
         the name of a national site (e.g. 'Isle Royale')
 
@@ -32,7 +32,7 @@ class NationalSite:
     phone: string
         the phone of a national site (e.g. '(616) 319-7906', '307-344-7381')
     '''
-    
+
     def __init__(self, category, name, address, zipcode, phone):
         self.category = category
         self.name = name
@@ -43,14 +43,14 @@ class NationalSite:
     def info(self):
         '''Returns a string representation of the national
         site instance's information.
-        
+
         The string representation is in the format of
         '<name> (<category>): <address> <zip>'.
 
         Parameters
         ----------
         none
-        
+
         Returns
         -------
         string
@@ -63,7 +63,7 @@ class NationalSite:
 
 
 def build_state_url_dict():
-    ''' Make a dictionary that maps state name to state page 
+    ''' Make a dictionary that maps state name to state page
     url from "https://www.nps.gov"
 
     Parameters
@@ -88,16 +88,16 @@ def build_state_url_dict():
         state_url = state.find('a')['href']
         dict_state_name_url[state_name.lower()] = state_url_head + state_url
     return dict_state_name_url
-       
+
 
 def get_site_instance(site_url):
     '''Make an instances from a national site URL.
-    
+
     Parameters
     ----------
     site_url: string
         The URL for a national site page in nps.gov
-    
+
     Returns
     -------
     instance
@@ -114,34 +114,34 @@ def get_site_instance(site_url):
         print('Fetching')
         response = requests.get(site_url)
         soup = BeautifulSoup(response.text, 'html.parser')
-        site_category = soup.find('span', class_ = 'Hero-designation').text.strip()
-        site_name = soup.find('a', class_ = 'Hero-title').text.strip()
-        site_add_parent = soup.find('p', class_ = 'adr')
-        site_address_local = site_add_parent.find('span', itemprop = 'addressLocality').text.strip()
-        site_address_region = site_add_parent.find('span', itemprop = 'addressRegion').text.strip()
+        site_category = soup.find('span', class_='Hero-designation').text.strip()
+        site_name = soup.find('a', class_='Hero-title').text.strip()
+        site_add_parent = soup.find('p', class_='adr')
+        site_address_local = site_add_parent.find('span', itemprop='addressLocality').text.strip()
+        site_address_region = site_add_parent.find('span', itemprop='addressRegion').text.strip()
         site_address = site_address_local + ', ' + site_address_region
         site_zipcode = site_add_parent.find('span', class_='postal-code').text.strip()
         site_phone = soup.find('span', class_='tel').text.strip()
         cache['site_page'][site_url] = {
-            'site_category' : site_category,
-            'site_name' : site_name,
-            'site_address' : site_address,
-            'site_zipcode' : site_zipcode,
-            'site_phone' : site_phone
+            'site_category': site_category,
+            'site_name': site_name,
+            'site_address': site_address,
+            'site_zipcode': site_zipcode,
+            'site_phone': site_phone
         }
-    return NationalSite(category=site_category, name=site_name, 
-                        address=site_address, zipcode=site_zipcode, 
+    return NationalSite(category=site_category, name=site_name,
+                        address=site_address, zipcode=site_zipcode,
                         phone=site_phone)
 
 
 def get_sites_for_state(state_url):
     '''Make a list of national site instances from a state URL.
-    
+
     Parameters
     ----------
     state_url: string
         The URL for a state page in nps.gov
-    
+
     Returns
     -------
     list
@@ -175,12 +175,12 @@ def get_sites_for_state(state_url):
 
 def get_nearby_places(site_object):
     '''Obtain API data from MapQuest API.
-    
+
     Parameters
     ----------
     site_object: object
         an instance of a national site
-    
+
     Returns
     -------
     dict
@@ -217,11 +217,11 @@ def load_cache():
     If there has been cache file, load the file, process it
     and return the information in the cache file (which is
     a dict)
-    
+
     Parameters
     ----------
     none
-    
+
     Returns
     -------
     dict
@@ -235,10 +235,10 @@ def load_cache():
         print('Using cache')
     except:
         cache = {'main_page': build_state_url_dict(),
-            'state_page': {},
-            'site_page':{},
-            'nearby_places':{}
-        }
+                'state_page': {},
+                'site_page': {},
+                'nearby_places': {}
+                }
         print('Fetching')
     return cache
 
@@ -249,7 +249,7 @@ def save_cache(cache):
     Save the parameter cache (dict of information
     saved in web scraping) into outside file in
     format of json.
-    
+
     Parameters
     ----------
     cache: dict
@@ -257,7 +257,7 @@ def save_cache(cache):
     scraped from different web site to avoid repeat visit.
     for the details of the dictionary, please refer to
     the docstring of function 'load_cache()'
-    
+
     Returns
     -------
     none
@@ -276,22 +276,22 @@ def print_results(results):
     get the information of nearby places of a national
     site. Print the information out in format of: '<name>
     (<category>): <strret address>, <city name>.
-    
+
     Parameters
     ----------
     results: dictionary
         The dictionary return from MapQuest API
-    
+
     Returns
     -------
     none
     '''
     for result in results['searchResults']:
-        name = result['name'] 
+        name = result['name']
         category = result['fields']['group_sic_code_name']
         address = result['fields']['address']
         city = result['fields']['city']
-        place = Places(name = name, category = category, address = address, city = city)
+        place = Places(name=name, category=category, address=address, city=city)
         print('- ' + place.info())
 
 
@@ -307,7 +307,7 @@ class Places:
     category: string
         the category of a nearby place (e.g. 'Real Estate Agents')
         if no category information found, recorded as 'no category'
-    
+
     address: string
         the address of a nearby place (e.g. '1669 Mall Rd')
         if no address information found, recorded as 'no address'
@@ -335,14 +335,14 @@ class Places:
     def info(self):
         '''Returns a string representation of the national
         site instance's information.
-        
+
         The string representation is in the format of
         '<name> (<category>): <address> <zip>'.
 
         Parameters
         ----------
         none
-        
+
         Returns
         -------
         string
@@ -361,7 +361,7 @@ if __name__ == "__main__":
         ipt = input('Enter a state name (e.g. Michigan, michigan) or "exit"')
         if ipt == 'exit':
             break
-        elif ipt.lower() in cache['main_page']:       #输入的确是个state
+        elif ipt.lower() in cache['main_page']:
             state_url = cache['main_page'][ipt.lower()]
             list_of_site_instances = get_sites_for_state(state_url)
             length_of_line = 26 + len(ipt)
