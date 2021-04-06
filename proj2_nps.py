@@ -117,10 +117,17 @@ def get_site_instance(site_url):
         site_category = soup.find('span', class_='Hero-designation').text.strip()
         site_name = soup.find('a', class_='Hero-title').text.strip()
         site_add_parent = soup.find('p', class_='adr')
-        site_address_local = site_add_parent.find('span', itemprop='addressLocality').text.strip()
-        site_address_region = site_add_parent.find('span', itemprop='addressRegion').text.strip()
-        site_address = site_address_local + ', ' + site_address_region
-        site_zipcode = site_add_parent.find('span', class_='postal-code').text.strip()
+        if site_add_parent != None:
+            site_address_local = site_add_parent.find('span', itemprop='addressLocality').text.strip()
+            site_address_region = site_add_parent.find('span', itemprop='addressRegion').text.strip()
+            site_address = site_address_local + ', ' + site_address_region
+            try:
+                site_zipcode = site_add_parent.find('span', class_='postal-code').text.strip()
+            except: #for death valley
+                site_zipcode = site_add_parent.find('span', itemprop='postalCode').text.strip()
+        else: #for yosemite
+            site_address = 'Yosemite Valley, CA'
+            site_zipcode = '95389'
         site_phone = soup.find('span', class_='tel').text.strip()
         cache['site_page'][site_url] = {
             'site_category': site_category,
